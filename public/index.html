@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Holiday Calendar</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Holiday Calendar</h1>
+    <div class="year-nav">
+      <button id="prev-year">&#8249;</button>
+      <span id="current-year"></span>
+      <button id="next-year">&#8250;</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="people-grid">
+
+      <div class="person-card">
+        <div class="person-header">
+          <h2>Niranjan</h2>
+          <div class="stats">
+            <div class="stat">
+              <span class="label">Entitlement</span>
+              <span class="value" id="niranjan-entitlement">—</span>
+              <button class="edit-link" onclick="showEntitlementModal('Niranjan')">edit</button>
+            </div>
+            <div class="stat">
+              <span class="label">Taken</span>
+              <span class="value" id="niranjan-taken">0</span>
+            </div>
+            <div class="stat">
+              <span class="label">Planned</span>
+              <span class="value" id="niranjan-planned">0</span>
+            </div>
+            <div class="stat remaining">
+              <span class="label">Remaining</span>
+              <span class="value" id="niranjan-remaining">—</span>
+            </div>
+          </div>
+        </div>
+        <div id="niranjan-list"></div>
+        <button class="add-btn" onclick="showAddHoliday('Niranjan')">+ Add Holiday</button>
+      </div>
+
+      <div class="person-card">
+        <div class="person-header">
+          <h2>Nayana</h2>
+          <div class="stats">
+            <div class="stat">
+              <span class="label">Entitlement</span>
+              <span class="value" id="nayana-entitlement">—</span>
+              <button class="edit-link" onclick="showEntitlementModal('Nayana')">edit</button>
+            </div>
+            <div class="stat">
+              <span class="label">Taken</span>
+              <span class="value" id="nayana-taken">0</span>
+            </div>
+            <div class="stat">
+              <span class="label">Planned</span>
+              <span class="value" id="nayana-planned">0</span>
+            </div>
+            <div class="stat remaining">
+              <span class="label">Remaining</span>
+              <span class="value" id="nayana-remaining">—</span>
+            </div>
+          </div>
+        </div>
+        <div id="nayana-list"></div>
+        <button class="add-btn" onclick="showAddHoliday('Nayana')">+ Add Holiday</button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Add Holiday Modal -->
+  <div id="holiday-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h3 id="holiday-modal-title">Add Holiday</h3>
+      <form id="holiday-form">
+        <div class="form-group">
+          <label for="h-date">Date</label>
+          <input type="date" id="h-date" required>
+        </div>
+        <div class="form-group">
+          <label for="h-name">Name</label>
+          <input type="text" id="h-name" placeholder="e.g. Christmas Day" required>
+        </div>
+        <div class="form-group checkbox-group">
+          <label><input type="checkbox" id="h-public"> Public holiday</label>
+        </div>
+        <p class="form-error" id="h-error"></p>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeHolidayModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Entitlement Modal -->
+  <div id="entitlement-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h3 id="ent-modal-title">Set Entitlement</h3>
+      <form id="entitlement-form">
+        <input type="hidden" id="ent-person">
+        <div class="form-group">
+          <label for="ent-days">Total holiday days</label>
+          <input type="number" id="ent-days" min="0" max="365" required>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeEntitlementModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
