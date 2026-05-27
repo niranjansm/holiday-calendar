@@ -27,9 +27,13 @@ async function loadYear(year) {
   state.holidays = { Niranjan: [], Nayana: [] };
   data.holidays.forEach(h => { state.holidays[h.person].push(h); });
 
+  state.comments = { Niranjan: '', Nayana: '' };
+  (data.comments || []).forEach(c => { state.comments[c.person] = c.content; });
+
   document.getElementById('current-year').textContent = year;
   renderPerson('Niranjan');
   renderPerson('Nayana');
+  renderComments();
 }
 
 // ── Rendering ────────────────────────────────────────────────────────────────
@@ -92,12 +96,36 @@ function esc(s) {
 
 // ── Add holiday modal ─────────────────────────────────────────────────────────
 
+function getHolidayMode() {
+  return document.querySelector('input[name="h-mode"]:checked').value;
+}
+
+function setHolidayMode(mode) {
+  document.getElementById('single-date-group').classList.toggle('hidden', mode !== 'single');
+  document.getElementById('range-date-group').classList.toggle('hidden', mode !== 'range');
+  document.getElementById('h-date').required = mode === 'single';
+  document.getElementById('h-start').required = mode === 'range';
+  document.getElementById('h-end').required = mode === 'range';
+}
+
+document.querySelectorAll('input[name="h-mode"]').forEach(r => {
+  r.addEventListener('change', () => setHolidayMode(getHolidayMode()));
+});
+
 function showAddHoliday(person) {
   addingFor = person;
   document.getElementById('holiday-modal-title').textContent = `Add Holiday — ${person}`;
+  document.querySelector('input[name="h-mode"][value="single"]').checked = true;
+  setHolidayMode('single');
   document.getElementById('h-date').value = '';
   document.getElementById('h-date').min = `${currentYear}-01-01`;
   document.getElementById('h-date').max = `${currentYear}-12-31`;
+  document.getElementById('h-start').value = '';
+  document.getElementById('h-start').min = `${currentYear}-01-01`;
+  document.getElementById('h-start').max = `${currentYear}-12-31`;
+  document.getElementById('h-end').value = '';
+  document.getElementById('h-end').min = `${currentYear}-01-01`;
+  document.getElementById('h-end').max = `${currentYear}-12-31`;
   document.getElementById('h-name').value = '';
   document.getElementById('h-public').checked = false;
   document.getElementById('h-error').textContent = '';
@@ -112,12 +140,25 @@ function closeHolidayModal() {
 
 document.getElementById('holiday-form').addEventListener('submit', async e => {
   e.preventDefault();
-  const date      = document.getElementById('h-date').value;
+  const mode      = getHolidayMode();
   const name      = document.getElementById('h-name').value.trim();
   const is_public = document.getElementById('h-public').checked;
   document.getElementById('h-error').textContent = '';
   try {
-    await api('POST', '/api/holidays', { person: addingFor, year: currentYear, date, name, is_public });
+    if (mode === 'single') {
+      const date = document.getElementById('h-date').value;
+      await api('POST', '/api/holidays', { person: addingFor, year: currentYear, date, name, is_public });
+    } else {
+      const start_date = document.getElementById('h-start').value;
+      const end_date   = document.getElementById('h-end').value;
+      const result = await api('POST', '/api/holidays/range', { person: addingFor, year: currentYear, start_date, end_date, name, is_public });
+      if (result.skipped > 0) {
+        document.getElementById('h-error').textContent =
+          `Added ${result.inserted} day(s). ${result.skipped} already existed and were skipped.`;
+        loadYear(currentYear);
+        return;
+      }
+    }
     closeHolidayModal();
     loadYear(currentYear);
   } catch (err) {
@@ -155,6 +196,24 @@ document.getElementById('entitlement-form').addEventListener('submit', async e =
   closeEntitlementModal();
   loadYear(currentYear);
 });
+
+// ── Comments ──────────────────────────────────────────────────────────────────
+
+function renderComments() {
+  ['Niranjan', 'Nayana'].forEach(person => {
+    const el = document.getElementById(`${person.toLowerCase()}-comment`);
+    el.value = state.comments[person] || '';
+    document.getElementById(`${person.toLowerCase()}-comment-saved`).textContent = '';
+  });
+}
+
+async function saveComment(person) {
+  const content = document.getElementById(`${person.toLowerCase()}-comment`).value;
+  await api('POST', '/api/comments', { person, year: currentYear, content });
+  const savedEl = document.getElementById(`${person.toLowerCase()}-comment-saved`);
+  savedEl.textContent = 'Saved';
+  setTimeout(() => { savedEl.textContent = ''; }, 2000);
+}
 
 // ── Year navigation ───────────────────────────────────────────────────────────
 

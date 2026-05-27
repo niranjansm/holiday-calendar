@@ -24,6 +24,14 @@ async function init() {
       is_public BOOLEAN NOT NULL DEFAULT FALSE,
       UNIQUE(person, date)
     );
+
+    CREATE TABLE IF NOT EXISTS comments (
+      id SERIAL PRIMARY KEY,
+      person TEXT NOT NULL,
+      year INTEGER NOT NULL,
+      content TEXT NOT NULL DEFAULT '',
+      UNIQUE(person, year)
+    );
   `);
 }
 

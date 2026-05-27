@@ -77,14 +77,45 @@
     </div>
   </main>
 
+  <section class="comments-section">
+    <div class="comments-grid">
+      <div class="comment-card">
+        <h3>Niranjan — Notes</h3>
+        <textarea id="niranjan-comment" placeholder="Add notes for this year..."></textarea>
+        <div class="comment-actions">
+          <span class="comment-saved" id="niranjan-comment-saved"></span>
+          <button class="btn btn-primary btn-sm" onclick="saveComment('Niranjan')">Save</button>
+        </div>
+      </div>
+      <div class="comment-card">
+        <h3>Nayana — Notes</h3>
+        <textarea id="nayana-comment" placeholder="Add notes for this year..."></textarea>
+        <div class="comment-actions">
+          <span class="comment-saved" id="nayana-comment-saved"></span>
+          <button class="btn btn-primary btn-sm" onclick="saveComment('Nayana')">Save</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Add Holiday Modal -->
   <div id="holiday-modal" class="modal-overlay hidden">
     <div class="modal-box">
       <h3 id="holiday-modal-title">Add Holiday</h3>
       <form id="holiday-form">
-        <div class="form-group">
+        <div class="form-group mode-toggle-group">
+          <label class="mode-option"><input type="radio" name="h-mode" value="single" checked> Single date</label>
+          <label class="mode-option"><input type="radio" name="h-mode" value="range"> Date range</label>
+        </div>
+        <div id="single-date-group" class="form-group">
           <label for="h-date">Date</label>
-          <input type="date" id="h-date" required>
+          <input type="date" id="h-date">
+        </div>
+        <div id="range-date-group" class="form-group hidden">
+          <label for="h-start">From</label>
+          <input type="date" id="h-start" style="margin-bottom:8px">
+          <label for="h-end">To</label>
+          <input type="date" id="h-end">
         </div>
         <div class="form-group">
           <label for="h-name">Name</label>
